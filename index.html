@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Augusto Joel Sosa Escalada - Interactive Professional Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .interactive-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .selected-job {
+            border-left: 4px solid #2563eb;
+            background-color: #eff6ff;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #2563eb;
+            color: #2563eb;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans flex flex-col min-h-screen">
+
+    <!-- Chosen Palette: Slate & Blue Professional (Warm Neutrals: #f8fafc, #f1f5f9; Primary Accent: #2563eb; Text: #1e293b, #475569) -->
+    
+    <!-- Application Structure Plan: The SPA is structured as an interactive professional dashboard. It moves away from a static list to a multi-faceted view of the candidate's value. 
+    1. Header/Summary provides immediate context. 
+    2. 'Career Analytics' translates raw dates into visual metrics (Industry breakdown, Experience duration) to quickly convey stability and primary expertise areas. 
+    3. 'Interactive Experience Explorer' uses a master-detail layout, allowing recruiters to scan roles quickly on the left and drill down into specific achievements on the right without losing context. 
+    4. 'Core Competencies & Education' grid categorizes soft/hard skills for easy reading. This layout optimizes for the short attention span of hiring managers, making key data instantly accessible and engaging. -->
+    
+    <!-- Visualization & Content Choices: 
+    - Goal: Compare industry experience lengths. Viz: Doughnut Chart (Chart.js, Canvas). Justification: Shows the proportion of time spent in different sectors (Hospitality vs Customer Relations vs Sales), highlighting adaptability.
+    - Goal: Compare role tenure. Viz: Horizontal Bar Chart (Chart.js, Canvas). Justification: Clearly displays the length of each employment period in months, visualizing career stability.
+    - Goal: Explore detailed work history. Viz: Master-Detail Interactive List (HTML/JS). Justification: Prevents overwhelming text walls. Users click a job title to reveal bullet points dynamically, encouraging active reading.
+    - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. All visual elements are HTML/CSS shapes, Unicode characters, or Canvas-based Chart.js. -->
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">AUGUSTO JOEL SOSA ESCALADA</h1>
+                <p class="text-lg text-blue-600 font-medium mt-1">Customer Relations & Technical Support Professional</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex flex-col md:items-end text-sm text-slate-600">
+                <p>📍 Montreal, QC</p>
+                <p>📞 (514) 651-3146</p>
+                <p>✉️ augustojse@gmail.com</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 w-full">
+
+        <section id="executive-summary" class="bg-white rounded-xl shadow-sm p-6 md:p-8 border border-slate-100">
+            <h2 class="text-2xl font-bold text-slate-800 mb-3 flex items-center">
+                <span class="text-blue-500 mr-2">👤</span> Professional Summary
+            </h2>
+            <p class="text-slate-600 mb-4 leading-relaxed">
+                This section provides a high-level overview of Augusto's professional background and language proficiencies. It sets the tone for the entire profile, establishing the candidate's extensive experience and core attributes before diving into specific metrics and roles.
+            </p>
+            <div class="bg-slate-50 rounded-lg p-5 border border-slate-200">
+                <p class="text-slate-700 leading-relaxed text-lg">
+                    Trilingual (<span class="font-semibold text-blue-700">English, French, Spanish</span>) and highly adaptable professional with over <span class="font-semibold">6 years</span> of diverse work experience spanning customer relations, sales, and fast-paced service environments. 
+                    A proven ability to interact effectively with end-users, resolve complex issues, and deliver exceptional customer service while maintaining workplace efficiency.
+                </p>
+            </div>
+        </section>
+
+        <section id="career-analytics">
+            <h2 class="text-2xl font-bold text-slate-800 mb-3 flex items-center">
+                <span class="text-blue-500 mr-2">📊</span> Career Analytics
+            </h2>
+            <p class="text-slate-600 mb-6 leading-relaxed">
+                This analytics dashboard translates raw chronological work history into quantitative insights. By visualizing the proportion of time spent across different industries and the specific duration of each role, users can quickly gauge Augusto's stability, primary domains of expertise, and consistent employment record.
+            </p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                    <h3 class="text-lg font-semibold text-slate-700 mb-4 text-center">Experience by Industry (Months)</h3>
+                    <div class="chart-container">
+                        <canvas id="industryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                    <h3 class="text-lg font-semibold text-slate-700 mb-4 text-center">Role Tenure (Months)</h3>
+                    <div class="chart-container">
+                        <canvas id="tenureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="interactive-experience">
+            <h2 class="text-2xl font-bold text-slate-800 mb-3 flex items-center">
+                <span class="text-blue-500 mr-2">💼</span> Interactive Work Experience
+            </h2>
+            <p class="text-slate-600 mb-6 leading-relaxed">
+                Explore Augusto's detailed work history using the interactive panel below. This master-detail layout organizes roles chronologically. Click on any job title in the left menu to instantly load the corresponding responsibilities and achievements on the right, allowing for targeted reading without overwhelming the screen with text.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="w-full md:w-1/3 bg-slate-50 border-r border-slate-200 p-4 h-96 overflow-y-auto" id="job-list">
+                </div>
+
+                <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col" id="job-details-panel">
+                    <div class="flex-grow flex items-center justify-center text-slate-400 text-center" id="empty-state">
+                        <p>👈 Select a role from the list to view details.</p>
+                    </div>
+                    <div id="job-content" class="hidden h-full flex flex-col">
+                        <div class="border-b border-slate-200 pb-4 mb-5">
+                            <h3 class="text-2xl font-bold text-slate-900" id="detail-title"></h3>
+                            <div class="flex items-center text-blue-600 font-medium mt-1 text-lg">
+                                <span class="mr-2">🏢</span> <span id="detail-company"></span>
+                            </div>
+                            <div class="flex items-center text-slate-500 text-sm mt-2">
+                                <span class="mr-2">📅</span> <span id="detail-dates"></span>
+                                <span class="mx-2">|</span>
+                                <span class="mr-2">⏱️</span> <span id="detail-duration"></span>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-semibold text-slate-700 mb-3 uppercase tracking-wider text-sm">Key Responsibilities</h4>
+                            <ul id="detail-bullets" class="space-y-3 text-slate-600 list-disc pl-5 marker:text-blue-500">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills-education" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 md:p-8 border border-slate-100 h-full">
+                <h2 class="text-2xl font-bold text-slate-800 mb-3 flex items-center">
+                    <span class="text-blue-500 mr-2">🛠️</span> Core Competencies
+                </h2>
+                <p class="text-slate-500 text-sm mb-5">
+                    A categorized breakdown of hard and soft skills, demonstrating a well-rounded technical and interpersonal profile.
+                </p>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2 border-b pb-1">Client Relations</h3>
+                        <p class="text-slate-700">Excellent communication and customer service skills; adept at interacting with end-users to diagnose and quickly resolve problems.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2 border-b pb-1">Administration & Workflow</h3>
+                        <p class="text-slate-700">Documentation, precise logging of information, time management, task prioritization, and punctuality with deadlines.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2 border-b pb-1">IT & Technical</h3>
+                        <p class="text-slate-700 font-medium">Installation, setup, and maintenance of Windows Server and Windows Pro environments.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2 border-b pb-1">Soft Skills</h3>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">Adaptable</span>
+                            <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">Charismatic</span>
+                            <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">Fast Learner</span>
+                            <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">Team Player</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-8">
+                <div class="bg-white rounded-xl shadow-sm p-6 md:p-8 border border-slate-100">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-3 flex items-center">
+                        <span class="text-blue-500 mr-2">🎓</span> Education
+                    </h2>
+                    <p class="text-slate-500 text-sm mb-5">
+                        Academic background highlighting ongoing continuous learning and foundational technical training.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="relative pl-6 border-l-2 border-blue-200 pb-2">
+                            <span class="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px] top-1"></span>
+                            <h3 class="font-bold text-slate-800">DEC in Psychology</h3>
+                            <p class="text-slate-600">Dawson College <span class="text-sm text-slate-400 ml-2">2025 – Present</span></p>
+                        </li>
+                        <li class="relative pl-6 border-l-2 border-blue-200 pb-2">
+                            <span class="absolute w-3 h-3 bg-slate-300 rounded-full -left-[7px] top-1"></span>
+                            <h3 class="font-bold text-slate-800">Network Administration Program</h3>
+                            <p class="text-slate-600">Dawson College <span class="text-sm text-slate-400 ml-2">2023</span></p>
+                        </li>
+                        <li class="relative pl-6 border-l-2 border-transparent">
+                            <span class="absolute w-3 h-3 bg-slate-300 rounded-full -left-[7px] top-1"></span>
+                            <h3 class="font-bold text-slate-800">High School Diploma (Volet Musique)</h3>
+                            <p class="text-slate-600">École Secondaire Dorval Jean-XXIII <span class="text-sm text-slate-400 ml-2">Graduated 2018</span></p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 md:p-8 border border-slate-100 flex-grow">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-3 flex items-center">
+                        <span class="text-blue-500 mr-2">🌟</span> Additional Interests
+                    </h2>
+                    <p class="text-slate-500 text-sm mb-5">
+                        Personal pursuits that contribute to well-rounded technical and creative problem-solving skills.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="flex items-center bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">🎵 Music</span>
+                        <span class="flex items-center bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">🎨 Art</span>
+                        <span class="flex items-center bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">🚴 Biking</span>
+                        <span class="flex items-center bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">💪 Fitness (Gym)</span>
+                        <span class="flex items-center bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">🎮 Video Game Modding</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center mt-12">
+        <p class="text-sm">&copy; 2026 Augusto Joel Sosa Escalada - Interactive Profile</p>
+    </footer>
+
+    <script>
+        const jobsData = [
+            {
+                id: 'canadalife',
+                title: 'Customer Relations Specialist',
+                company: 'CanadaLife',
+                dates: 'September 2023 – July 2025',
+                duration: '21 months',
+                monthsNum: 21,
+                industry: 'Customer Relations',
+                responsibilities: [
+                    'Delivered dedicated customer service to pensioners and current federal employees, ensuring high levels of client satisfaction and issue resolution.',
+                    'Managed inbound customer calls, performed structured call follow-ups, and utilized internal messaging programs for cross-departmental communication.',
+                    'Navigated and adhered to strict federal guidelines, logging accurate and helpful information for future use and compliance.'
+                ]
+            },
+            {
+                id: 'marusan',
+                title: 'Food Service Worker',
+                company: 'Marusan',
+                dates: 'April 2023 – August 2023',
+                duration: '4 months',
+                monthsNum: 4,
+                industry: 'Hospitality',
+                responsibilities: [
+                    'Executed kitchen preparatory work and cooked food to order in a fast-paced environment.',
+                    'Handled cash transactions accurately while prioritizing positive customer interactions and overall satisfaction.'
+                ]
+            },
+            {
+                id: 'burgert',
+                title: 'Food Service Worker',
+                company: 'Burger T!',
+                dates: 'February 2022 – October 2022',
+                duration: '9 months',
+                monthsNum: 9,
+                industry: 'Hospitality',
+                responsibilities: [
+                    'Managed the preparation, cooking, and timely dispatching of high-volume orders.',
+                    'Maintained clean preparation areas and operated the cash register, ensuring a seamless and satisfying customer experience.'
+                ]
+            },
+            {
+                id: 'virginplus',
+                title: 'Sales Consultant',
+                company: 'Virgin Plus',
+                dates: 'November 2020 – May 2021',
+                duration: '7 months',
+                monthsNum: 7,
+                industry: 'Sales',
+                responsibilities: [
+                    'Advised clients on mobile devices and cellular plans, tailoring recommendations to suit their specific personal and professional needs.',
+                    'Managed the full lifecycle of client accounts, including plan activations, renewals, and cancellations.',
+                    'Executed precise administrative and data-entry tasks on the internal company system.'
+                ]
+            },
+            {
+                id: 'dagwoods',
+                title: 'Food Service Worker',
+                company: 'Dagwoods',
+                dates: 'August 2019 – November 2020',
+                duration: '16 months',
+                monthsNum: 16,
+                industry: 'Hospitality',
+                responsibilities: [
+                    'Supported daily operations through kitchen preparatory work, cooking, and food preparation.',
+                    'Processed cash transactions and actively engaged with customers to guarantee excellent service.'
+                ]
+            },
+            {
+                id: 'barfurco',
+                title: 'Inventory Clerk',
+                company: 'Bar Furco',
+                dates: 'January 2019 – June 2019',
+                duration: '6 months',
+                monthsNum: 6,
+                industry: 'Administration',
+                responsibilities: [
+                    'Conducted meticulous wine and liquor inventory, ensuring accurate stock levels for a busy bar environment.'
+                ]
+            },
+            {
+                id: 'cafeparvis',
+                title: 'Busboy',
+                company: 'Café Parvis',
+                dates: 'June 2017 – September 2018',
+                duration: '16 months',
+                monthsNum: 16,
+                industry: 'Hospitality',
+                responsibilities: [
+                    'Supported front-of-house operations through efficient table setup, clearing, and dining room maintenance.',
+                    'Assisted back-of-house staff with kitchen preparatory work during peak service hours.'
+                ]
+            }
+        ];
+
+        function initInteractiveExperience() {
+            const listContainer = document.getElementById('job-list');
+            
+            jobsData.forEach((job, index) => {
+                const jobBtn = document.createElement('button');
+                jobBtn.className = 'w-full text-left p-4 border-b border-slate-200 hover:bg-white transition-colors cursor-pointer interactive-card flex flex-col focus:outline-none';
+                jobBtn.dataset.id = job.id;
+                
+                if (index === 0) {
+                    jobBtn.classList.add('selected-job');
+                }
+
+                jobBtn.innerHTML = `
+                    <span class="font-bold text-slate-800">${job.title}</span>
+                    <span class="text-blue-600 text-sm font-medium">${job.company}</span>
+                    <span class="text-slate-400 text-xs mt-1">${job.duration}</span>
+                `;
+
+                jobBtn.addEventListener('click', () => {
+                    document.querySelectorAll('#job-list button').forEach(btn => btn.classList.remove('selected-job'));
+                    jobBtn.classList.add('selected-job');
+                    displayJobDetails(job.id);
+                });
+
+                listContainer.appendChild(jobBtn);
+            });
+
+            if (jobsData.length > 0) {
+                displayJobDetails(jobsData[0].id);
+            }
+        }
+
+        function displayJobDetails(jobId) {
+            const job = jobsData.find(j => j.id === jobId);
+            if (!job) return;
+
+            document.getElementById('empty-state').classList.add('hidden');
+            const contentPanel = document.getElementById('job-content');
+            contentPanel.classList.remove('hidden');
+
+            document.getElementById('detail-title').textContent = job.title;
+            document.getElementById('detail-company').textContent = job.company;
+            document.getElementById('detail-dates').textContent = job.dates;
+            document.getElementById('detail-duration').textContent = job.duration;
+
+            const ul = document.getElementById('detail-bullets');
+            ul.innerHTML = '';
+            job.responsibilities.forEach(resp => {
+                const li = document.createElement('li');
+                li.textContent = resp;
+                ul.appendChild(li);
+            });
+            
+            contentPanel.animate([
+                { opacity: 0, transform: 'translateY(10px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 300, easing: 'ease-out' });
+        }
+
+        function initCharts() {
+            const industryData = {
+                'Customer Relations': 0,
+                'Sales': 0,
+                'Hospitality': 0,
+                'Administration': 0
+            };
+
+            const tenureLabels = [];
+            const tenureData = [];
+
+            jobsData.forEach(job => {
+                industryData[job.industry] += job.monthsNum;
+                tenureLabels.push(job.company);
+                tenureData.push(job.monthsNum);
+            });
+
+            const indCtx = document.getElementById('industryChart').getContext('2d');
+            new Chart(indCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(industryData),
+                    datasets: [{
+                        data: Object.values(industryData),
+                        backgroundColor: ['#2563eb', '#3b82f6', '#93c5fd', '#bfdbfe'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: "'Inter', sans-serif" } } },
+                        tooltip: {
+                            callbacks: { label: function(context) { return context.label + ': ' + context.parsed + ' months'; } }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            const tenCtx = document.getElementById('tenureChart').getContext('2d');
+            new Chart(tenCtx, {
+                type: 'bar',
+                data: {
+                    labels: tenureLabels,
+                    datasets: [{
+                        label: 'Months Employed',
+                        data: tenureData,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: '#f1f5f9' }, title: { display: true, text: 'Months' } },
+                        y: { grid: { display: false }, ticks: { callback: function(value) {
+                            const label = this.getLabelForValue(value);
+                            return label.length > 16 ? label.substr(0, 16) + '...' : label;
+                        }}}
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: { label: function(context) { return context.parsed.x + ' months'; } }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initInteractiveExperience();
+            initCharts();
+        });
+    </script>
+</body>
+</html>
